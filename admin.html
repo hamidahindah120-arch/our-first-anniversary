@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<title>Secret Admin | Our Anniversary</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #090909;
+  color: #f5eeee;
+  font-family: 'DM Sans', sans-serif;
+  padding: 30px 18px;
+}
+
+.container {
+  width: 100%;
+  max-width: 850px;
+  margin: 50px auto;
+}
+
+h1, h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+}
+
+h1 {
+  font-size: 42px;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: #a99b9b;
+  margin-bottom: 35px;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.card {
+  background: #151111;
+  border: 1px solid #392020;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0 16px;
+  background: #090909;
+  color: white;
+  border: 1px solid #493030;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+label {
+  font-size: 12px;
+  color: #c6aaaa;
+}
+
+button {
+  padding: 13px 22px;
+  background: #8d252e;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+button:hover {
+  background: #a8323d;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+
+.message {
+  color: #e9a0a0;
+  font-size: 13px;
+  margin-top: 15px;
+  white-space: pre-wrap;
+}
+
+.answer-card {
+  background: #100d0d;
+  border: 1px solid #352020;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+}
+
+.question {
+  color: #bd777d;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-bottom: 9px;
+}
+
+.answer {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 23px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  color: #887b7b;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+#status {
+  color: #c6aaaa;
+  font-size: 13px;
+}
+
+@media(max-width: 500px) {
+  h1 { font-size: 34px; }
+  .card { padding: 18px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="topbar">
+    <div>
+      <h1>Our Little Secret.</h1>
+      <div class="subtitle">
+        PRIVATE ANNIVERSARY ANSWERS · ONLY FOR INDAH
+      </div>
+    </div>
+    <button id="logoutBtn" class="hidden" onclick="logout()">
+      LOG OUT
+    </button>
+  </div>
+
+  <section id="loginSection" class="card">
+    <h2>Welcome back, Indah.</h2>
+    <p class="subtitle">Sign in to read your secret messages.</p>
+
+    <form id="loginForm">
+      <label>Email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="Your Supabase email"
+        required
+      >
+
+      <label>Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Your password"
+        required
+      >
+
+      <button id="loginBtn" type="submit">
+        SIGN IN →
+      </button>
+    </form>
+
+    <div id="loginMessage" class="message"></div>
+  </section>
+
+  <section id="dashboard" class="hidden">
+
+    <div class="card">
+      <h2>Dear Indah,</h2>
+      <p>
+        Here are the little things someone wanted to tell you.
+      </p>
+      <div id="status">Loading answers...</div>
+    </div>
+
+    <div id="answersContainer"></div>
+
+  </section>
+
+</div>
+
+<script>
+const SUPABASE_URL =
+  "https://gwfjhsmnbknnzhgymnpz.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_WUR3R05foPU1j4gG8dwUI_ILI3yCut";
+
+const OWNER_ID =
+  "c0960787-117a-44b0-9fc3-2404d7a5c407";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const loginSection = document.getElementById("loginSection");
+const dashboard = document.getElementById("dashboard");
+const logoutBtn = document.getElementById("logoutBtn");
+const loginMessage = document.getElementById("loginMessage");
+const answersContainer = document.getElementById("answersContainer");
+const statusText = document.getElementById("status");
+
+function showDashboard() {
+  loginSection.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+  logoutBtn.classList.remove("hidden");
+}
+
+function showLogin() {
+  loginSection.classList.remove("hidden");
+  dashboard.classList.add("hidden");
+  logoutBtn.classList.add("hidden");
+}
+
+async function loadAnswers() {
+  statusText.textContent = "Loading answers...";
+  answersContainer.replaceChildren();
+
+  const { data, error } = await db
+    .from("anniversary_answers")
+    .select("id, answers, submitted_at")
+    .order("submitted_at", { ascending: false });
+
+  if (error) {
+    statusText.textContent =
+      "Could not load answers: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    statusText.textContent =
+      "No answers yet. Maybe someone hasn't finished the questions ♡";
+    return;
+  }
+
+  statusText.textContent =
+    data.length + " submission(s) received ♡";
+
+  data.forEach((submission, submissionIndex) => {
+    const date = new Date(submission.submitted_at);
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "card";
+
+    const heading = document.createElement("h2");
+    heading.textContent =
+      "Submission #" + (data.length - submissionIndex);
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = date.toLocaleString("id-ID", {
+      dateStyle: "long",
+      timeStyle: "short"
+    });
+
+    wrapper.append(heading, meta);
+
+    (submission.answers || []).forEach((item, index) => {
+      const answerCard = document.createElement("div");
+      answerCard.className = "answer-card";
+
+      const question = document.createElement("div");
+      question.className = "question";
+      question.textContent =
+        "QUESTION " + String(index + 1).padStart(2, "0");
+
+      const questionText = document.createElement("div");
+      questionText.className = "meta";
+      questionText.textContent =
+        typeof item === "object" && item !== null
+          ? item.question || "Question"
+          : "Question " + (index + 1);
+
+      const answer = document.createElement("div");
+      answer.className = "answer";
+      answer.textContent =
+        typeof item === "object" && item !== null
+          ? item.answer || ""
+          : item;
+
+      answerCard.append(question, questionText, answer);
+      wrapper.appendChild(answerCard);
+    });
+
+    answersContainer.appendChild(wrapper);
+  });
+}
+
+document.getElementById("loginForm").addEventListener(
+  "submit",
+  async function(event) {
+    event.preventDefault();
+
+    const loginBtn = document.getElementById("loginBtn");
+    loginBtn.disabled = true;
+    loginBtn.textContent = "SIGNING IN...";
+    loginMessage.textContent = "";
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      loginMessage.textContent =
+        "Login failed: " + error.message;
+      loginBtn.disabled = false;
+      loginBtn.textContent = "SIGN IN →";
+      return;
+    }
+
+    if (data.user.id !== OWNER_ID) {
+      await db.auth.signOut();
+
+      loginMessage.textContent =
+        "Access denied. This page belongs to its owner only.";
+
+      loginBtn.disabled = false;
+      loginBtn.textContent = "SIGN IN →";
+      return;
+    }
+
+    showDashboard();
+    await loadAnswers();
+
+    loginBtn.disabled = false;
+    loginBtn.textContent = "SIGN IN →";
+  }
+);
+
+async function logout() {
+  await db.auth.signOut();
+  showLogin();
+  answersContainer.replaceChildren();
+  statusText.textContent = "";
+  document.getElementById("password").value = "";
+}
+
+async function checkSession() {
+  const { data } = await db.auth.getSession();
+
+  if (data.session) {
+    const { data: userData } = await db.auth.getUser();
+
+    if (userData.user && userData.user.id === OWNER_ID) {
+      showDashboard();
+      await loadAnswers();
+      return;
+    }
+
+    await db.auth.signOut();
+  }
+
+  showLogin();
+}
+
+checkSession();
+</script>
+
+</body>
+</html>

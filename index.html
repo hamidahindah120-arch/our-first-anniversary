@@ -301,7 +301,7 @@ video {
 <audio id="music" loop>
   <source src="Can't Help Falling In Love - Elvis Presley cover by Alexandra Porat - Alex Porat.mp3" type="audio/mpeg">
 </audio>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <button class="music-control" id="musicBtn" onclick="toggleMusic()">
   ♫ MUSIC ON
 </button>
@@ -460,6 +460,16 @@ video {
 </main>
 
 <script>
+  const SUPABASE_URL =
+  "https://gwfjhsmnbknnzhgymnpz.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_WUR3R05foPU1j4gG8dwUI_ILI3yCut";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 const questions = [
   "Nama kamu siapa?",
   "Kamu siapanya Indah?",
@@ -492,7 +502,7 @@ function showScreen(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function submitAnswer() {
+async function submitAnswer() {
   const answer = answerInput.value.trim();
 
   if (!answer) {
@@ -501,16 +511,45 @@ function submitAnswer() {
     return;
   }
 
-  answers.push(answer);
-  currentQuestion++;
+  answers.push({
+    question: questions[currentQuestion],
+    answer: answer
+  });
 
-  if (currentQuestion >= questions.length) {
+  const nextBtn = document.getElementById("nextBtn");
+
+  if (currentQuestion === questions.length - 1) {
+    nextBtn.disabled = true;
+    nextBtn.textContent = "Saving your answers...";
+
+    const { error } = await supabaseClient
+      .from("anniversary_answers")
+      .insert([{ answers: answers }]);
+
+    if (error) {
+      console.error("Supabase error:", error);
+      answers.pop();
+
+      errorMessage.textContent =
+        "Oops, jawaban belum tersimpan. Coba lagi ya.";
+
+      nextBtn.disabled = false;
+      nextBtn.textContent = "Continue →";
+      return;
+    }
+
+    currentQuestion++;
     progressBar.style.width = "100%";
+
+    nextBtn.disabled = false;
+    nextBtn.textContent = "Continue →";
+
     showScreen("secretScreen");
     createHearts();
     return;
   }
 
+  currentQuestion++;
   updateQuestion();
 }
 

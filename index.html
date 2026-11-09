@@ -1,0 +1,649 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>Our Little Story</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --red: #c51f45;
+  --pink: #f08aa4;
+  --white: #f8edf0;
+  --muted: #a9949a;
+  --bg: #080808;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(100, 0, 25, .17), transparent 65%),
+    radial-gradient(ellipse at 10% 90%, rgba(130, 0, 35, .09), transparent 45%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+#particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.sparkle {
+  position: absolute;
+  color: #fff;
+  opacity: 0;
+  animation: twinkle 4s ease-in-out infinite;
+  text-shadow: 0 0 9px #ff8da8;
+}
+
+.heart {
+  position: absolute;
+  color: #c51f45;
+  opacity: 0;
+  animation: fall linear forwards;
+  text-shadow: 0 0 12px #c51f45;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(.5); }
+  50% { opacity: .75; transform: scale(1.2); }
+}
+
+@keyframes fall {
+  0% { transform: translateY(-10vh) rotate(0); opacity: 0; }
+  15% { opacity: .55; }
+  85% { opacity: .4; }
+  100% { transform: translateY(110vh) rotate(240deg); opacity: 0; }
+}
+
+main {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+}
+
+.screen {
+  width: 100%;
+  max-width: 550px;
+  text-align: center;
+  display: none;
+  animation: appear .9s ease both;
+}
+
+.screen.active {
+  display: block;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.eyebrow {
+  color: var(--pink);
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+}
+
+h1, h2, .romantic {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: clamp(42px, 10vw, 65px);
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: clamp(32px, 8vw, 46px);
+  line-height: 1.2;
+}
+
+.description {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.9;
+  margin: 20px auto;
+  max-width: 390px;
+}
+
+.question-number {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--pink);
+  margin-bottom: 30px;
+}
+
+.question {
+  font-size: clamp(32px, 8vw, 44px);
+  margin-bottom: 35px;
+  font-style: italic;
+}
+
+input {
+  width: 100%;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(220,90,120,.35);
+  border-radius: 3px;
+  color: white;
+  padding: 17px 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  text-align: center;
+  transition: .3s;
+}
+
+input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 20px rgba(197,31,69,.12);
+}
+
+input::placeholder {
+  color: #79666c;
+}
+
+button {
+  background: var(--red);
+  color: white;
+  border: 1px solid var(--red);
+  padding: 14px 35px;
+  margin-top: 25px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: .3s;
+}
+
+button:hover {
+  background: transparent;
+  box-shadow: 0 0 22px rgba(197,31,69,.3);
+}
+
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.progress {
+  height: 2px;
+  width: 100%;
+  background: #292024;
+  margin: 35px 0 0;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 10%;
+  background: var(--red);
+  transition: width .5s;
+}
+
+.message {
+  color: var(--pink);
+  font-size: 12px;
+  min-height: 20px;
+  margin-top: 15px;
+}
+
+.divider {
+  width: 50px;
+  height: 1px;
+  background: var(--red);
+  margin: 30px auto;
+}
+
+.letter {
+  border: 1px solid rgba(197,31,69,.3);
+  background: rgba(30,8,15,.45);
+  padding: 30px 24px;
+  margin: 25px 0;
+  line-height: 2;
+  font-size: 13px;
+  color: #d6c3c8;
+  text-align: left;
+}
+
+.letter p + p {
+  margin-top: 15px;
+}
+
+.signature {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 26px;
+  color: var(--pink);
+  text-align: right;
+  margin-top: 20px;
+}
+
+.video-frame {
+  border: 1px solid rgba(197,31,69,.4);
+  padding: 7px;
+  margin: 25px 0;
+  background: rgba(197,31,69,.05);
+}
+
+video {
+  width: 100%;
+  display: block;
+  max-height: 500px;
+  background: #000;
+}
+
+.music-control {
+  position: fixed;
+  right: 18px;
+  top: 18px;
+  z-index: 10;
+  display: none;
+  background: rgba(25,10,15,.8);
+  border: 1px solid rgba(197,31,69,.5);
+  color: var(--pink);
+  padding: 10px 13px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.small-note {
+  color: #806e74;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-top: 25px;
+}
+
+@media(max-width: 480px) {
+  main { padding: 25px 22px; }
+  .letter { padding: 24px 18px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="particles"></div>
+
+<audio id="music" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<button class="music-control" id="musicBtn" onclick="toggleMusic()">
+  ♫ MUSIC ON
+</button>
+
+<main>
+
+  <!-- OPENING / QUESTION 1 -->
+  <section class="screen active" id="questionScreen">
+    <div class="question-number" id="questionNumber">
+      QUESTION 01 / 10
+    </div>
+
+    <h2 class="question" id="questionText">
+      Nama kamu siapa?
+    </h2>
+
+    <input
+      type="text"
+      id="answerInput"
+      placeholder="Ketik jawabanmu di sini..."
+      autocomplete="off"
+    >
+
+    <div class="message" id="errorMessage"></div>
+
+    <button onclick="submitAnswer()" id="nextBtn">
+      Continue →
+    </button>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="small-note">TAKE YOUR TIME</div>
+  </section>
+
+  <!-- SECRET MESSAGE -->
+  <section class="screen" id="secretScreen">
+    <div class="eyebrow">A little secret for you</div>
+
+    <h1 class="romantic">
+      You made it.
+    </h1>
+
+    <div class="divider"></div>
+
+    <p class="description">
+      Setelah semua pertanyaan itu, ada satu hal
+      yang ingin Indah sampaikan...
+    </p>
+
+    <h2 style="color:var(--pink); font-style:italic;">
+      Karena Indah juga sayang kamu.
+    </h2>
+
+    <p class="description">
+      More than these words could ever explain.
+    </p>
+
+    <button onclick="showLetter()">
+      There's more for you →
+    </button>
+  </section>
+
+  <!-- ANNIVERSARY LETTER -->
+  <section class="screen" id="letterScreen">
+    <div class="eyebrow">12 November 2026 · Our special day</div>
+
+    <h1>One Year With You</h1>
+
+    <p class="description">
+      One year, and a thousand little memories.
+    </p>
+
+    <div class="divider"></div>
+
+    <div class="letter">
+      <p>Happy 1st Anniversary, sayang. ♡</p>
+
+      <p>
+        Nggak terasa ya, kita sudah sampai di titik ini.
+        Walaupun perjalanan kita mungkin masih terbilang sebentar,
+        buat Indah setiap waktu yang kita lewati punya arti tersendiri.
+      </p>
+
+      <p>
+        Terima kasih sudah menjadi bagian dari hari-hari Indah.
+        Terima kasih untuk setiap cerita, tawa, perhatian,
+        dan hal-hal kecil yang mungkin sederhana tapi selalu berarti.
+      </p>
+
+      <p>
+        Semoga kita bisa terus seperti ini.
+        Tetap saling memilih, saling memahami, saling menjaga,
+        dan saling menyayangi, bahkan ketika keadaan tidak selalu mudah.
+      </p>
+
+      <p>
+        Indah nggak tahu apa yang akan terjadi di masa depan,
+        tapi Indah berharap orang yang akan terus berjalan
+        bersama Indah adalah kamu.
+      </p>
+
+      <p>
+        Semoga bukan cuma satu tahun.
+        Semoga masih ada banyak anniversary,
+        banyak cerita, dan banyak alasan untuk tetap bersama.
+      </p>
+
+      <p>
+        Here's to us, to our little world,
+        and to a love that keeps growing.
+      </p>
+
+      <div class="signature">
+        Always yours, Indah ♡
+      </div>
+    </div>
+
+    <button onclick="showVideo()">
+      One Last Surprise →
+    </button>
+  </section>
+
+  <!-- VIDEO SURPRISE -->
+  <section class="screen" id="videoScreen">
+    <div class="eyebrow">A little something from me</div>
+
+    <h1 class="romantic">For You.</h1>
+
+    <p class="description">
+      Some memories deserve to be kept forever.
+      This one is for you. ♡
+    </p>
+
+    <div class="video-frame">
+      <video id="anniversaryVideo" controls playsinline preload="metadata">
+        <source src="video-anniversary.mp4" type="video/mp4">
+        Browser kamu belum mendukung pemutaran video.
+      </video>
+    </div>
+
+    <h2 style="color:var(--pink); font-style:italic;">
+      To many more years with you.
+    </h2>
+
+    <p class="description">
+      I love you. Always. ♡
+    </p>
+
+    <button onclick="replayStory()">
+      Replay Our Story ↻
+    </button>
+  </section>
+
+</main>
+
+<script>
+const questions = [
+  "Nama kamu siapa?",
+  "Kamu siapanya Indah?",
+  "Kamu sayang Indah nggak?",
+  "Apa yang paling kamu suka dari Indah?",
+  "Apa yang ingin kamu jaga dari hubungan kita?",
+  "Kalau ada masalah, kamu mau tetap bertahan dan ngobrol sama Indah?",
+  "Apa kamu mau terus bikin kenangan bareng Indah?",
+  "Kalau Indah lagi sedih, kamu mau nemenin Indah?",
+  "Kamu masih mau memilih Indah di hari-hari berikutnya?",
+  "Terakhir, kamu mau sama Indah untuk waktu yang lama?"
+];
+
+let currentQuestion = 0;
+let answers = [];
+
+const questionScreen = document.getElementById("questionScreen");
+const questionText = document.getElementById("questionText");
+const questionNumber = document.getElementById("questionNumber");
+const answerInput = document.getElementById("answerInput");
+const errorMessage = document.getElementById("errorMessage");
+const progressBar = document.getElementById("progressBar");
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(screen => {
+    screen.classList.remove("active");
+  });
+
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function submitAnswer() {
+  const answer = answerInput.value.trim();
+
+  if (!answer) {
+    errorMessage.textContent = "Jawab dulu ya, jangan dikosongin ♡";
+    answerInput.focus();
+    return;
+  }
+
+  answers.push(answer);
+  currentQuestion++;
+
+  if (currentQuestion >= questions.length) {
+    progressBar.style.width = "100%";
+    showScreen("secretScreen");
+    createHearts();
+    return;
+  }
+
+  updateQuestion();
+}
+
+function updateQuestion() {
+  questionText.textContent = questions[currentQuestion];
+
+  questionNumber.textContent =
+    "QUESTION " +
+    String(currentQuestion + 1).padStart(2, "0") +
+    " / 10";
+
+  progressBar.style.width =
+    ((currentQuestion) / questions.length * 100) + "%";
+
+  answerInput.value = "";
+  errorMessage.textContent = "";
+
+  // Memperbarui animasi transisi
+  questionScreen.classList.remove("active");
+  void questionScreen.offsetWidth;
+  questionScreen.classList.add("active");
+
+  answerInput.focus();
+}
+
+answerInput.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    submitAnswer();
+  }
+});
+
+// MUSIC
+const music = document.getElementById("music");
+const musicBtn = document.getElementById("musicBtn");
+
+function startMusic() {
+  music.play().then(() => {
+    musicBtn.style.display = "block";
+    musicBtn.textContent = "♫ MUSIC ON";
+  }).catch(() => {
+    musicBtn.style.display = "block";
+    musicBtn.textContent = "♫ PLAY MUSIC";
+  });
+}
+
+function toggleMusic() {
+  if (music.paused) {
+    music.play().then(() => {
+      musicBtn.textContent = "♫ MUSIC ON";
+    }).catch(() => {
+      musicBtn.textContent = "♫ PLAY MUSIC";
+    });
+  } else {
+    music.pause();
+    musicBtn.textContent = "♫ MUSIC OFF";
+  }
+}
+
+// Start music after first interaction
+document.addEventListener("click", function firstClick() {
+  startMusic();
+  document.removeEventListener("click", firstClick);
+});
+
+// LETTER AND VIDEO
+function showLetter() {
+  showScreen("letterScreen");
+  createHearts();
+}
+
+function showVideo() {
+  showScreen("videoScreen");
+  createHearts();
+
+  const video = document.getElementById("anniversaryVideo");
+  video.currentTime = 0;
+  video.play().catch(() => {});
+}
+
+function replayStory() {
+  document.getElementById("anniversaryVideo").pause();
+  document.getElementById("anniversaryVideo").currentTime = 0;
+
+  currentQuestion = 0;
+  answers = [];
+  updateQuestion();
+  showScreen("questionScreen");
+}
+
+// BACKGROUND SPARKLES
+const particleContainer = document.getElementById("particles");
+
+function createSparkles() {
+  for (let i = 0; i < 45; i++) {
+    const sparkle = document.createElement("span");
+    sparkle.className = "sparkle";
+    sparkle.textContent = "✦";
+
+    sparkle.style.left = Math.random() * 100 + "%";
+    sparkle.style.top = Math.random() * 100 + "%";
+    sparkle.style.fontSize = (5 + Math.random() * 9) + "px";
+    sparkle.style.animationDelay = Math.random() * 5 + "s";
+    sparkle.style.animationDuration = (3 + Math.random() * 4) + "s";
+
+    particleContainer.appendChild(sparkle);
+  }
+}
+
+function createHearts() {
+  for (let i = 0; i < 7; i++) {
+    const heart = document.createElement("span");
+    heart.className = "heart";
+    heart.textContent = "♡";
+
+    heart.style.left = Math.random() * 100 + "%";
+    heart.style.top = "-20px";
+    heart.style.fontSize = (10 + Math.random() * 12) + "px";
+    heart.style.animationDuration = (7 + Math.random() * 6) + "s";
+
+    particleContainer.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 14000);
+  }
+}
+
+createSparkles();
+
+// A few hearts occasionally, not a full-screen shower
+setInterval(() => {
+  if (Math.random() > 0.5) createHearts();
+}, 9000);
+
+</script>
+
+</body>
+</html>

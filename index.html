@@ -531,7 +531,7 @@ async function submitAnswer() {
       answers.pop();
 
       errorMessage.textContent =
-        "Oops, jawaban belum tersimpan. Coba lagi ya.";
+        "Gagal menyimpan: " + error.message;
 
       nextBtn.disabled = false;
       nextBtn.textContent = "Continue →";
